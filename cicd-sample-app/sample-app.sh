@@ -1,14 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
-mkdir tempdir
-mkdir tempdir/templates
-mkdir tempdir/static
+# Maak de directories aan als ze nog niet bestaan (-p optie)
+mkdir -p tempdir
+mkdir -p tempdir/templates
+mkdir -p tempdir/static
 
+# Kopieer de bestanden naar de juiste directories
 cp sample_app.py tempdir/.
 cp -r templates/* tempdir/templates/.
 cp -r static/* tempdir/static/.
 
+# Maak een Dockerfile aan met de inhoud hieronder
 cat > tempdir/Dockerfile << _EOF_
 FROM python
 RUN pip install flask
@@ -19,7 +22,8 @@ EXPOSE 5050
 CMD python /home/myapp/sample_app.py
 _EOF_
 
+# Ga naar de tempdir directory en voer de Docker build en run uit
 cd tempdir || exit
 docker build -t sampleapp .
 docker run -t -d -p 5050:5050 --name samplerunning sampleapp
-docker ps -a 
+docker ps -a
